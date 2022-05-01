@@ -8,13 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import coil.load
 import coil.transform.CircleCropTransformation
-
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.karumi.dexter.Dexter
@@ -25,14 +25,18 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import dev.acuon.imageeditor.R
 import dev.acuon.imageeditor.databinding.FragmentHomeBinding
+import java.io.File
 
 class HomeFragment : Fragment() {
 
     private lateinit var bindingHome: FragmentHomeBinding
     private val CAMERA_REQUEST_CODE = 1
     private val GALLERY_REQUEST_CODE = 2
+    private lateinit var path: File
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +45,6 @@ class HomeFragment : Fragment() {
     ): View? {
         bindingHome = FragmentHomeBinding.inflate(inflater, container, false)
         return bindingHome.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,8 +65,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
+        val mimeTypes = arrayOf("image/jpeg", "image/jpg", "image/png")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
@@ -167,16 +173,40 @@ class HomeFragment : Fragment() {
                 }
 
                 GALLERY_REQUEST_CODE -> {
-                    bindingHome.imageView.load(data?.data) {
-                        crossfade(true)
-                        crossfade(1000)
+//                    bindingHome.imageView.load(data?.data) {
+//                        crossfade(true)
+//                        crossfade(1000)
+//                    }
+                    data?.data.let { uri ->
+                        launchImageCrop(uri!!)
                     }
 
+                }
+
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    val result = CropImage.getActivityResult(data)
+                    if (resultCode == Activity.RESULT_OK) {
+//                        setImage(result.uri)
+                        bindingHome.imageView.load(result.uri) {
+                            crossfade(true)
+                            crossfade(1000)
+                        }
+                    } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                        Log.d("ImageCropping", "onActivityResult: ${result.error}")
+                    }
                 }
             }
 
         }
 
+    }
+
+    private fun launchImageCrop(uri: Uri) {
+        CropImage.activity(uri).start(requireActivity())
+//            .setGuidelines(CropImageView.Guidelines.ON)
+//            .setAspectRatio(1920, 1080)
+//            .setCropShape(CropImageView.CropShape.RECTANGLE)
+//            .start(requireActivity())
     }
 
 }

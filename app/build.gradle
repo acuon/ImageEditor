@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
 }
 
 android {
@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "dev.acuon.imageeditor"
-        minSdk 21
-        targetSdk 32
+        minSdk 22
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -52,4 +52,11 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.2'
     //coil
     implementation("io.coil-kt:coil:1.1.1")
+
+    // Glide
+    implementation "com.github.bumptech.glide:glide:4.11.0"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.9.0"
+
+    // Android Image Cropper
+    api "com.theartofdev.edmodo:android-image-cropper:2.8.0"
 }
