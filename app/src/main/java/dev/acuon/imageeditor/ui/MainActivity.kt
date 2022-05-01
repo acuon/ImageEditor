@@ -3,6 +3,7 @@ package dev.acuon.imageeditor.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import dev.acuon.imageeditor.R
 
 class MainActivity : AppCompatActivity() {
