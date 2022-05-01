@@ -38,15 +38,9 @@ class ImageAdapter(
     class ViewHolder(itemView: View, var clickListener: OnItemClickListener) :
         RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView
-        var title: TextView
-        var size: TextView
 
         fun setData(image: ImageModel) {
             itemView.apply {
-                title.text = image.title
-                size.text = getSize(
-                    image.size
-                )
                 Glide.with(context).load(image.path).placeholder(R.drawable.ic_broken_image)
                     .into(imageView)
                 itemView.setOnClickListener {
@@ -57,8 +51,6 @@ class ImageAdapter(
 
         init {
             imageView = itemView.findViewById(R.id.list_item_image)
-            title = itemView.findViewById(R.id.list_item_title)
-            size = itemView.findViewById(R.id.list_item_size)
         }
     }
 

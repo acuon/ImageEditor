@@ -16,9 +16,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -29,9 +29,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import dev.acuon.imageeditor.R
 import dev.acuon.imageeditor.databinding.FragmentHomeBinding
+import dev.acuon.imageeditor.ui.MainActivity
 import dev.acuon.imageeditor.ui.adapter.ImageAdapter
 import dev.acuon.imageeditor.ui.adapter.OnItemClickListener
 import dev.acuon.imageeditor.ui.model.ImageModel
@@ -47,8 +47,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
     private var arrayList = ArrayList<ImageModel>()
 
     private lateinit var bindingHome: FragmentHomeBinding
-    private val CAMERA_REQUEST_CODE = 1
-    private val GALLERY_REQUEST_CODE = 2
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,14 +64,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
         navController = Navigation.findNavController(view)
 
         bindingHome.apply {
-            rcvVisibility.setOnClickListener {
-                if (recyclerView.visibility == View.GONE) {
-                    recyclerView.visibility = View.VISIBLE
-                } else {
-                    recyclerView.visibility = View.GONE
-                }
-            }
-
             fab.setOnClickListener {
                 val optionsDialog = AlertDialog.Builder(requireContext())
                     .setTitle(R.string.add_image)
@@ -86,8 +76,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 optionsDialog.show()
             }
 
-            val linearLayoutManager = GridLayoutManager(requireContext(), 2)
-            linearLayoutManager.reverseLayout = true
+            val linearLayoutManager = GridLayoutManager(requireContext(), 4)
             recyclerView.layoutManager = linearLayoutManager
             recyclerView.setHasFixedSize(true)
 
@@ -168,6 +157,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
 
                         }
                     }
+
                     override fun onPermissionRationaleShouldBeShown(
                         p0: MutableList<PermissionRequest>?,
                         p1: PermissionToken?
@@ -210,10 +200,11 @@ class HomeFragment : Fragment(), OnItemClickListener {
             when (requestCode) {
                 CAMERA_REQUEST_CODE -> {
                     val bitmap = data?.extras?.get("data") as Bitmap
-                    //we are using coroutine image loader (coil)
+
                     val p = BitmapUtils.saveImage(requireContext(), bitmap)
-                    bindingHome.text.text = p
                     p?.let { toastMessage(it) }
+
+                    //we are using coroutine image loader (coil)
 //                    bindingHome.imageView.load(bitmap) {
 //                        crossfade(true)
 //                        crossfade(1000)
@@ -238,14 +229,8 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                     val result = CropImage.getActivityResult(data)
                     if (resultCode == Activity.RESULT_OK) {
-//                        setImage(result.uri)
-//                        bindingHome.imageView.load(result.uri) {
-//                            crossfade(true)
-//                            crossfade(1000)
-//                        }
                         val temp = BitmapUtils.saveImageUsingUri(requireContext(), result.uri)
-                        toastMessage(result.uri.toString()+"\n new = "+temp)
-                        bindingHome.text.text = result.uri.toString()
+                        toastMessage(result.uri.toString() + "\n new = " + temp)
                         getImages()
                     } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                         Log.d("ImageCropping", "onActivityResult: ${result.error}")
@@ -268,12 +253,23 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onClick(image: ImageModel) {
-        var bundle = Bundle()
+        val bundle = Bundle()
+        bundle.putInt(ENTRY_WAY, GALLERY_REQUEST_CODE)
         bundle.putString(PATH_KEY, image.path)
 
+        navigationHelper(bundle)
+    }
+
+    public fun navigationHelper(bundle: Bundle) {
+        val navBuilder = NavOptions.Builder()
+        navBuilder.setEnterAnim(R.anim.slide_in_right)
+//            .setExitAnim(R.anim.slide_in_right)
+            .setPopEnterAnim(R.anim.slide_in_left)
+//            .setPopExitAnim(R.anim.slide_in_right)
         navController.navigate(
             R.id.action_homeFragment_to_editFragment,
-            bundle
+            bundle,
+            navBuilder.build()
         )
     }
 

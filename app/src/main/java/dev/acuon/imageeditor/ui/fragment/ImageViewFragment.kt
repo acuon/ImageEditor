@@ -7,13 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import dev.acuon.imageeditor.R
-import dev.acuon.imageeditor.databinding.FragmentEditBinding
+import dev.acuon.imageeditor.databinding.FragmentImageViewBinding
 import dev.acuon.imageeditor.ui.model.ImageModel
 import dev.acuon.imageeditor.utils.PATH_KEY
 
 class ImageViewFragment : Fragment() {
 
-    private lateinit var bindingEdit: FragmentEditBinding
+    private lateinit var bindingEdit: FragmentImageViewBinding
     private lateinit var path: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,13 +32,13 @@ class ImageViewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        bindingEdit = FragmentEditBinding.inflate(inflater, container, false)
+        bindingEdit = FragmentImageViewBinding.inflate(inflater, container, false)
         return bindingEdit.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Glide.with(requireContext()).load(path).placeholder(R.drawable.ic_broken_image).into(bindingEdit.imageView2)
+        Glide.with(requireContext()).load(path).placeholder(R.drawable.ic_broken_image).into(bindingEdit.imageView)
     }
 
 }

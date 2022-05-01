@@ -5,15 +5,12 @@
     <string name="go_to_settings">GO TO SETTINGS</string>
     <string name="add_image">Add Image</string>
 
+    <string name="back">Go back to Quotes page.</string>
+
     <string name="start_camera">Start Camera</string>
     <string name="imageview">imageView</string>
 
     <string name="delete_success">Images was deleted!</string>
     <string name="delete_failure">Image deletion failed</string>
-    <string name="saved_message">Image Saved at %1$s</string>
-    <string name="not_saved">Image not saved!</string>
     <string name="error">Error finding image</string>
-    <string name="go">GO</string>
-    <string name="permission_denied">Permission denied</string>
-    <string name="imageview_description">The imageview that contains the emojified picture</string>
 </resources>

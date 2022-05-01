@@ -18,5 +18,5 @@
         android:id="@+id/editFragment"
         android:name="dev.acuon.imageeditor.ui.fragment.ImageViewFragment"
         android:label="fragment_edit"
-        tools:layout="@layout/fragment_edit" />
+        tools:layout="@layout/fragment_image_view" />
 </navigation>

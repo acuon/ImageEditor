@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="fontJosefinSans">
+        <item name="fontFamily">@font/josefinsans</item>
+    </style>
+
+    <style name="fontWorkSans">
+        <item name="fontFamily">@font/worksans</item>
+    </style>
+</resources>
