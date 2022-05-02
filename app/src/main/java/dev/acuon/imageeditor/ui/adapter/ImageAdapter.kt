@@ -53,21 +53,4 @@ class ImageAdapter(
             imageView = itemView.findViewById(R.id.list_item_image)
         }
     }
-
-    companion object {
-        fun getSize(size: Long): String {
-            if (size <= 0) {
-                return "0"
-            }
-            val d = size.toDouble()
-            val log10 = (Math.log10(d) / Math.log10(1024.0)).toInt()
-            val str = StringBuilder()
-            val decimalFormat = DecimalFormat(DECIMAL_FORMAT)
-            val power = Math.pow(1024.0, log10.toDouble())
-            str.append(decimalFormat.format(d / power))
-            str.append(" ")
-            str.append(arrayOf("B", "KB", "MB", "GB", "TB")[log10])
-            return str.toString()
-        }
-    }
 }

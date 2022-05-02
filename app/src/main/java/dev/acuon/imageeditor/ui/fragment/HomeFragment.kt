@@ -122,7 +122,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
             override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
                 Toast.makeText(
                     activity,
-                    "You have denied the storage permission to select image",
+                    R.string.you_have_denied_storage_permission,
                     Toast.LENGTH_SHORT
                 ).show()
                 showRotationalDialogForPermission()
@@ -201,66 +201,56 @@ class HomeFragment : Fragment(), OnItemClickListener {
                 CAMERA_REQUEST_CODE -> {
                     val bitmap = data?.extras?.get("data") as Bitmap
 
-                    val p = BitmapUtils.saveImage(requireContext(), bitmap)
-                    p?.let { toastMessage(it) }
-
-                    //we are using coroutine image loader (coil)
-//                    bindingHome.imageView.load(bitmap) {
-//                        crossfade(true)
-//                        crossfade(1000)
-////                        transformations(CircleCropTransformation())
-//                    }
+                    val path = BitmapUtils.saveImage(requireContext(), bitmap)
+                    val prev = path
+                    path?.let {
+                        launchImageCrop(it)
+                    }
                     getImages()
                 }
 
                 GALLERY_REQUEST_CODE -> {
-//                    bindingHome.imageView.load(data?.data) {
-//                        crossfade(true)
-//                        crossfade(1000)
-//                    }
                     data?.data.let { uri ->
                         launchImageCrop(uri!!)
                     }
-
                     getImages()
-
                 }
 
                 CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                     val result = CropImage.getActivityResult(data)
                     if (resultCode == Activity.RESULT_OK) {
-                        val temp = BitmapUtils.saveImageUsingUri(requireContext(), result.uri)
-                        toastMessage(result.uri.toString() + "\n new = " + temp)
+                        BitmapUtils.saveImageUsingUri(requireContext(), result.uri)
                         getImages()
                     } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                         Log.d("ImageCropping", "onActivityResult: ${result.error}")
                     }
                 }
             }
-
         }
+    }
 
+    private fun launchImageCrop(path: String) {
+        val uri = Uri.fromFile(File(path))
+        CropImage.activity(uri)
+            .start(requireActivity(), this)
     }
 
     private fun launchImageCrop(uri: Uri) {
         CropImage.activity(uri)
-            .start(requireActivity(), this);
-//        CropImage.activity(uri).start(requireActivity())
-//            .setGuidelines(CropImageView.Guidelines.ON)
-//            .setAspectRatio(1920, 1080)
-//            .setCropShape(CropImageView.CropShape.RECTANGLE)
-//            .start(requireActivity())
+            .start(requireActivity(), this)
     }
 
     override fun onClick(image: ImageModel) {
         val bundle = Bundle()
         bundle.putInt(ENTRY_WAY, GALLERY_REQUEST_CODE)
         bundle.putString(PATH_KEY, image.path)
+        bundle.putLong(SIZE_KEY, image.size)
+        bundle.putString(TITLE_KEY, image.title)
 
         navigationHelper(bundle)
     }
 
-    public fun navigationHelper(bundle: Bundle) {
+    private fun navigationHelper(bundle: Bundle) {
         val navBuilder = NavOptions.Builder()
         navBuilder.setEnterAnim(R.anim.slide_in_right)
 //            .setExitAnim(R.anim.slide_in_right)

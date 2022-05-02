@@ -1,80 +1,21 @@
 package dev.acuon.imageeditor.utils
 
-
-import android.R.attr.data
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.DisplayMetrics
-import android.view.WindowManager
-import androidx.core.content.FileProvider
+import android.widget.Toast
 import dev.acuon.imageeditor.R
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.OutputStream
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 internal object BitmapUtils {
-    private const val FILE_PROVIDER_AUTHORITY = "com.example.android.fileprovider"
-
-    /**
-     * Resamples the captured photo to fit the screen for better memory usage.
-     *
-     * @param context   The application context.
-     * @param imagePath The path of the photo to be resampled.
-     * @return The resampled bitmap
-     */
-    fun resamplePic(context: Context, imagePath: String?): Bitmap {
-
-        // Get device screen size information
-        val metrics = DisplayMetrics()
-        val manager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        manager.defaultDisplay.getMetrics(metrics)
-        val targetH = metrics.heightPixels
-        val targetW = metrics.widthPixels
-
-        // Get the dimensions of the original bitmap
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(imagePath, bmOptions)
-        val photoW = bmOptions.outWidth
-        val photoH = bmOptions.outHeight
-
-        // Determine how much to scale down the image
-        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false
-        bmOptions.inSampleSize = scaleFactor
-        return BitmapFactory.decodeFile(imagePath)
-    }
-
-    /**
-     * Creates the temporary image file in the cache directory.
-     *
-     * @return The temporary image file.
-     * @throws IOException Thrown if there is an error creating the file
-     */
-    @Throws(IOException::class)
-    fun createTempImageFile(context: Context): File {
-        val timeStamp = SimpleDateFormat(
-            "yyyyMMdd_HHmmss",
-            Locale.getDefault()
-        ).format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        val storageDir = context.externalCacheDir
-        return File.createTempFile(
-            imageFileName,  /* prefix */
-            ".jpg",  /* suffix */
-            storageDir /* directory */
-        )
-    }
 
     /**
      * Deletes image file for a given path.
@@ -156,6 +97,13 @@ internal object BitmapUtils {
         return savedImagePath
     }
 
+    /**
+     * Helper method for saving the image.
+     *
+     * @param context The application context.
+     * @param image   The image to be saved.
+     * @return The path of the saved image.
+     */
     fun saveImageUsingUri(context: Context, uri: Uri): String? {
         val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
         return saveImage(context, bitmap)
@@ -168,12 +116,41 @@ internal object BitmapUtils {
      * @param imagePath The path of the image to be shared.
      */
     fun shareImage(context: Context, imagePath: String?) {
-        // Create the share intent and start the share activity
-        val imageFile = File(imagePath)
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.type = "image/*"
-        val photoURI: Uri = FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, imageFile)
-        shareIntent.putExtra(Intent.EXTRA_STREAM, photoURI)
-        context.startActivity(shareIntent)
+        val uri = Uri.parse(imagePath)
+        // Sharing
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "image/jpg"
+
+        try {
+            intent.putExtra(Intent.EXTRA_STREAM, uri)
+        } catch (e: java.lang.Exception) {
+            Toast.makeText(
+                context,
+                "Failed to share!\nPlease try again.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        context.startActivity(Intent.createChooser(intent, "Share via:"))
     }
+
+    /**
+     * Helper method for getting the size of an image in byte unit.
+     *
+     * @param context   The image size in long.
+     */
+    fun getSize(size: Long): String {
+        if (size <= 0) {
+            return "0"
+        }
+        val d = size.toDouble()
+        val log10 = (Math.log10(d) / Math.log10(1024.0)).toInt()
+        val str = StringBuilder()
+        val decimalFormat = DecimalFormat(DECIMAL_FORMAT)
+        val power = Math.pow(1024.0, log10.toDouble())
+        str.append(decimalFormat.format(d / power))
+        str.append(" ")
+        str.append(arrayOf("B", "KB", "MB", "GB", "TB")[log10])
+        return str.toString()
+    }
+
 }

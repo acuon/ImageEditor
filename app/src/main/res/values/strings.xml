@@ -2,6 +2,7 @@
     <string name="app_name">Image Editor</string>
 
     <string name="permission_denied_message">It looks like you have turned off permissions required for this feature. It can be enable under App settings!!!</string>
+    <string name="you_have_denied_storage_permission">"You have denied the storage permission to select image"</string>
     <string name="go_to_settings">GO TO SETTINGS</string>
     <string name="add_image">Add Image</string>
 
@@ -13,4 +14,8 @@
     <string name="delete_success">Images was deleted!</string>
     <string name="delete_failure">Image deletion failed</string>
     <string name="error">Error finding image</string>
+    <string name="details">Details</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
 </resources>

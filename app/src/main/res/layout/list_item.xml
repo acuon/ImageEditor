@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="85dp"
-    android:layout_height="85dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="2dp"
+    android:layout_width="95dp"
+    android:layout_height="95dp"
+    android:layout_margin="5dp"
     android:background="@color/white"
     android:elevation="20dp"
     app:cardCornerRadius="5dp">
@@ -13,8 +13,8 @@
         android:id="@+id/list_item_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:srcCompat="@tools:sample/avatars"
         android:layout_centerVertical="true"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </androidx.cardview.widget.CardView>
