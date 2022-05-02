@@ -242,7 +242,6 @@ class HomeFragment : Fragment(), OnItemClickListener {
 
     override fun onClick(image: ImageModel) {
         val bundle = Bundle()
-        bundle.putInt(ENTRY_WAY, GALLERY_REQUEST_CODE)
         bundle.putString(PATH_KEY, image.path)
         bundle.putLong(SIZE_KEY, image.size)
         bundle.putString(TITLE_KEY, image.title)
