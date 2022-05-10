@@ -117,6 +117,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
         ).withListener(object : PermissionListener {
             override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
                 openGallery()
+                getImages()
             }
 
             override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
@@ -153,6 +154,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                         report?.let {
                             if (report.areAllPermissionsGranted()) {
                                 openCamera()
+                                getImages()
                             }
 
                         }
