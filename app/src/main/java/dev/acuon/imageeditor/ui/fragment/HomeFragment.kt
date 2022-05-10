@@ -226,6 +226,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
                     } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                         Log.d("ImageCropping", "onActivityResult: ${result.error}")
                     }
+                    getImages()
                 }
             }
         }
